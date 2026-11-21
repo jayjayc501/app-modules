@@ -8,8 +8,12 @@ le code est partagé, **les données jamais** : chaque appli garde sa propre bas
 | `connexion` | Se connecter avec Google (puis Apple), garder la session, savoir qui appelle le serveur | v0.1 : Google |
 | *(plus tard)* | notifications, modération par IA, envoi d'images, paiements… | — |
 
-Versions : chaque version est une étiquette Git (`v0.1.0`, `v0.2.0`…). Une appli choisit sa version et ne change
+Versions : une appli installe **une version précise** du module (un « commit » figé, voir le tableau) et n'en change
 que quand on le décide : une évolution du module ne casse jamais une appli toute seule.
+
+| Version | Commit à installer | Contenu |
+|---|---|---|
+| 0.1.0 | `063d1c55c484141ca5e057fe8d17ac4270e73933` | Connexion Google, page de test, tables des comptes |
 
 ---
 
@@ -35,9 +39,10 @@ Appli mobile (Expo)  ──►  Worker Cloudflare de l'appli  ──►  Base D1
 
 ### Ajouter la connexion à une nouvelle appli
 
-1. **Installer le module** dans le dossier du serveur et dans celui de l'appli mobile :
+1. **Installer le module** (commit de la version voulue, tableau ci-dessus) dans le dossier du serveur et dans
+   celui de l'appli mobile :
    ```json
-   "dependencies": { "app-modules": "github:jayjayc501/app-modules#v0.1.0" }
+   "dependencies": { "app-modules": "github:jayjayc501/app-modules#063d1c55c484141ca5e057fe8d17ac4270e73933" }
    ```
 2. **Base de l'appli** : copier `connexion/migrations/0001_comptes.sql` en premier dans le dossier `migrations/`
    du serveur, puis ajouter les tables de l'appli dans `0002_...sql`, `0003_...sql`.

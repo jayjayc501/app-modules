@@ -17,8 +17,10 @@ d'important change. Mode d'emploi des modules : [`README.md`](README.md).
 - Un module = du **code**, pas de données : **chaque appli a sa propre base D1 et ses propres comptes**, et son
   propre client Google. Pas de serveur ni de base de connexion communs (refusé par le propriétaire).
 - Connexion : Better Auth 1.7 (D1 reconnu directement depuis 1.5 ; `getCookie()` est asynchrone en 1.7), plugin `expo()` côté serveur, `expoClient` côté appli.
-- Distribution : dépendance Git avec étiquette de version (`github:jayjayc501/app-modules#v0.1.0`) ;
-  TypeScript sans étape de construction. Toute évolution = nouvelle étiquette ; ne jamais déplacer une étiquette.
+- Distribution : dépendance Git **figée sur un commit** (`github:jayjayc501/app-modules#<commit>`), TypeScript sans
+  étape de construction. Chaque version (champ `version` de `package.json`) est notée avec son commit dans le tableau
+  « Versions » du README. Claude ne peut pas créer d'étiquette Git (refusé par le proxy, et contourner par un workflow
+  a été refusé) : on n'utilise donc pas d'étiquettes. Le propriétaire peut en créer lui-même (GitHub › Releases) s'il le souhaite.
 - Premier utilisateur : « Je te l'avais dit » (dépôt privé `jayjayc501/jetelavaisdit`, branche `cloudflare`).
 
 ## Façon de travailler
@@ -31,4 +33,5 @@ d'important change. Mode d'emploi des modules : [`README.md`](README.md).
 
 ## Historique
 
-- 21/11/2026 : création, module `connexion` v0.1 (Google) en cours.
+- 21/11/2026 : création ; module `connexion` 0.1.0 (Google) = commit `063d1c5`, vérification verte
+  (9 tests de bout en bout, schéma conforme). Better Auth installé : 1.7.27.
