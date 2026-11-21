@@ -54,9 +54,9 @@ export async function seDeconnecter(client: ClientConnexion) {
 
 /**
  * En-têtes à ajouter aux appels vers le serveur de l'appli pour qu'il sache qui est connecté.
- * À utiliser avec `fetch(url, { headers: enTetesConnexion(client), credentials: 'omit' })`.
+ * À utiliser avec `fetch(url, { headers: await enTetesConnexion(client), credentials: 'omit' })`.
  */
-export function enTetesConnexion(client: ClientConnexion): Record<string, string> {
-  const cookie = client.getCookie();
+export async function enTetesConnexion(client: ClientConnexion): Promise<Record<string, string>> {
+  const cookie = await client.getCookie();
   return cookie ? { Cookie: cookie } : {};
 }

@@ -16,7 +16,7 @@ d'important change. Mode d'emploi des modules : [`README.md`](README.md).
 
 - Un module = du **code**, pas de données : **chaque appli a sa propre base D1 et ses propres comptes**, et son
   propre client Google. Pas de serveur ni de base de connexion communs (refusé par le propriétaire).
-- Connexion : Better Auth ≥ 1.5 (D1 reconnu directement), plugin `expo()` côté serveur, `expoClient` côté appli.
+- Connexion : Better Auth 1.7 (D1 reconnu directement depuis 1.5 ; `getCookie()` est asynchrone en 1.7), plugin `expo()` côté serveur, `expoClient` côté appli.
 - Distribution : dépendance Git avec étiquette de version (`github:jayjayc501/app-modules#v0.1.0`) ;
   TypeScript sans étape de construction. Toute évolution = nouvelle étiquette ; ne jamais déplacer une étiquette.
 - Premier utilisateur : « Je te l'avais dit » (dépôt privé `jayjayc501/jetelavaisdit`, branche `cloudflare`).
