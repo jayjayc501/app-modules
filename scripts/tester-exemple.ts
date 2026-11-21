@@ -61,6 +61,23 @@ await etape('retour vers l’appli mobile (scheme « exemple:// ») accepté', a
   assert.equal(r.status, 200, texte);
 });
 
+await etape('retour vers l’appli mobile, adresses de l’appli Android (« exemple:/// », « exemple:///accueil »)', async () => {
+  for (const callbackURL of ['exemple:///', 'exemple:///accueil', 'exemple://accueil']) {
+    const r = await fetch(`${base}/api/auth/sign-in/social`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'expo-origin': 'exemple://' },
+      body: JSON.stringify({ provider: 'google', callbackURL }),
+    });
+    const texte = await r.text();
+    assert.equal(r.status, 200, `${callbackURL} : ${texte}`);
+  }
+});
+
+await etape('relais Expo vers Google présent (/api/auth/expo-authorization-proxy)', async () => {
+  const r = await fetch(`${base}/api/auth/expo-authorization-proxy`, { redirect: 'manual' });
+  assert.notEqual(r.status, 404, 'le plugin Expo doit exposer son relais');
+});
+
 await etape('retour vers un scheme inconnu refusé', async () => {
   const r = await fetch(`${base}/api/auth/sign-in/social`, {
     method: 'POST',
