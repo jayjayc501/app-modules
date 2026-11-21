@@ -14,6 +14,7 @@ que quand on le décide : une évolution du module ne casse jamais une appli tou
 | Version | Commit à installer | Contenu |
 |---|---|---|
 | 0.1.0 | `063d1c55c484141ca5e057fe8d17ac4270e73933` | Connexion Google, page de test, tables des comptes |
+| 0.1.1 | `75be4e195576799f3bd218cc78dbb28f2bcf20a1` | Page de test : départ vers Google par navigation (corrige « state_mismatch » sur téléphone) |
 
 ---
 
@@ -42,7 +43,7 @@ Appli mobile (Expo)  ──►  Worker Cloudflare de l'appli  ──►  Base D1
 1. **Installer le module** (commit de la version voulue, tableau ci-dessus) dans le dossier du serveur et dans
    celui de l'appli mobile :
    ```json
-   "dependencies": { "app-modules": "github:jayjayc501/app-modules#063d1c55c484141ca5e057fe8d17ac4270e73933" }
+   "dependencies": { "app-modules": "github:jayjayc501/app-modules#75be4e195576799f3bd218cc78dbb28f2bcf20a1" }
    ```
 2. **Base de l'appli** : copier `connexion/migrations/0001_comptes.sql` en premier dans le dossier `migrations/`
    du serveur, puis ajouter les tables de l'appli dans `0002_...sql`, `0003_...sql`.

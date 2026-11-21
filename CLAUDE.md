@@ -35,3 +35,7 @@ d'important change. Mode d'emploi des modules : [`README.md`](README.md).
 
 - 21/11/2026 : création ; module `connexion` 0.1.0 (Google) = commit `063d1c5`, vérification verte
   (9 tests de bout en bout, schéma conforme). Better Auth installé : 1.7.27.
+- 22/11/2026 : 0.1.1 = commit `75be4e1`. Premier essai réel sur le téléphone du propriétaire : erreur Better Auth
+  « state_mismatch » au retour de Google, alors que le même parcours simulé par curl passait. La page de test lançait
+  la connexion par un appel en arrière-plan (fetch) ; elle passe maintenant par `/test-connexion/aller`, une vraie
+  navigation qui pose le cookie d'état dans la page qui part vers Google. Tests ajoutés (retour simulé avec et sans cookie).
