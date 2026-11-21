@@ -39,3 +39,6 @@ d'important change. Mode d'emploi des modules : [`README.md`](README.md).
   « state_mismatch » au retour de Google, alors que le même parcours simulé par curl passait. La page de test lançait
   la connexion par un appel en arrière-plan (fetch) ; elle passe maintenant par `/test-connexion/aller`, une vraie
   navigation qui pose le cookie d'état dans la page qui part vers Google. Tests ajoutés (retour simulé avec et sans cookie).
+- 22/11/2026 (nuit) : tests ajoutés sans changer le code (commit `7108b97`) : retours vers l'appli Android avec chemin
+  (`exemple:///`, `exemple:///accueil`) acceptés, relais Expo `/api/auth/expo-authorization-proxy` présent.
+  « Je te l'avais dit » utilise le module côté serveur ET côté appli (branche `cloudflare`).
