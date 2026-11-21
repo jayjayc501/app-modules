@@ -1,0 +1,17 @@
+// Exemple d'appli qui utilise le module connexion. Sert aux tests automatiques (wrangler dev, base D1 locale) :
+// il n'est jamais mis en ligne.
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "exemple-app-modules",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "exemple",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "../connexion/migrations"
+    }
+  ]
+}

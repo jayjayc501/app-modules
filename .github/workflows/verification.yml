@@ -1,0 +1,60 @@
+# Vérifie le module à chaque modification : types, schéma SQL conforme à Better Auth,
+# et test de bout en bout sur l'appli d'exemple (wrangler dev + base D1 locale).
+name: verification
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Installation
+        run: npm install --no-audit --no-fund
+
+      - name: Versions installées
+        run: npm ls better-auth @better-auth/expo wrangler --depth=0 || true
+
+      - name: Types
+        run: npm run verifier-types
+
+      - name: Schéma SQL conforme à Better Auth
+        run: npm run verifier-schema
+
+      - name: Base D1 locale de l'exemple
+        working-directory: exemple
+        run: npx wrangler d1 migrations apply DB --local
+
+      - name: Test de bout en bout (wrangler dev)
+        run: |
+          cd exemple
+          cat > .dev.vars <<'VARS'
+          BETTER_AUTH_SECRET=secret-de-test-secret-de-test-secret-de-test
+          URL_SERVEUR=http://127.0.0.1:8787
+          GOOGLE_CLIENT_ID=client-de-test.apps.googleusercontent.com
+          GOOGLE_CLIENT_SECRET=secret-de-test
+          MODE_TEST=1
+          VARS
+          npx wrangler dev --ip 127.0.0.1 --port 8787 > ../wrangler.log 2>&1 &
+          cd ..
+          for i in $(seq 1 60); do
+            curl -sf http://127.0.0.1:8787/api/auth/ok > /dev/null && break
+            sleep 2
+          done
+          npm run tester -- http://127.0.0.1:8787 || { echo '--- journal wrangler ---'; cat wrangler.log; exit 1; }
