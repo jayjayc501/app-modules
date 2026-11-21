@@ -120,7 +120,35 @@ export async function gererConnexion(
   if (o.pageTest && pathname === '/test-connexion') {
     return pageTestConnexion(o.nomAppli, o.methodes);
   }
+  if (o.pageTest && pathname === '/test-connexion/aller' && requete.method === 'GET') {
+    return allerVersMethode(connexion, requete, o.methodes);
+  }
   return null;
+}
+
+/**
+ * Départ vers Google (ou Apple) par une vraie navigation de page, et non par un appel en arrière-plan :
+ * le cookie qui protège la connexion (« state ») est ainsi posé dans la même page que celle qui part
+ * vers Google et qui en revient. Plus fiable sur téléphone (onglets intégrés aux applis, navigateurs stricts).
+ */
+async function allerVersMethode(connexion: Connexion, requete: Request, methodes: string[]): Promise<Response> {
+  const url = new URL(requete.url);
+  const methode = url.searchParams.get('methode') ?? '';
+  if (!methodes.includes(methode)) {
+    return new Response('Méthode de connexion inconnue ou non configurée.', { status: 400 });
+  }
+  const reponse = await connexion.api.signInSocial({
+    body: { provider: methode as 'google', callbackURL: `${url.origin}/test-connexion` },
+    headers: requete.headers,
+    asResponse: true,
+  });
+  const donnees = (await reponse.clone().json().catch(() => null)) as { url?: string } | null;
+  if (!reponse.ok || !donnees?.url) {
+    return new Response(`Connexion impossible (${reponse.status}).`, { status: 502 });
+  }
+  const entetes = new Headers({ location: donnees.url, 'cache-control': 'no-store' });
+  for (const cookie of reponse.headers.getSetCookie()) entetes.append('set-cookie', cookie);
+  return new Response(null, { status: 302, headers: entetes });
 }
 
 // ─── Page de test ───────────────────────────────────────────────────────────
@@ -139,7 +167,10 @@ function echapper(texte: string): string {
 export function pageTestConnexion(nomAppli: string, methodes: string[]): Response {
   const boutons = methodes.length
     ? methodes
-        .map((m) => `<button data-methode="${echapper(m)}">Se connecter avec ${echapper(NOMS[m] ?? m)}</button>`)
+        .map(
+          (m) =>
+            `<a class="bouton" href="/test-connexion/aller?methode=${encodeURIComponent(m)}">Se connecter avec ${echapper(NOMS[m] ?? m)}</a>`,
+        )
         .join('')
     : '<p class="alerte">Aucune méthode de connexion n’est encore configurée sur ce serveur.</p>';
 
@@ -158,6 +189,8 @@ export function pageTestConnexion(nomAppli: string, methodes: string[]): Respons
   .carte { background: #1a1922; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
   button { display: block; width: 100%; padding: 14px; margin: 10px 0 0; border: 0; border-radius: 12px;
            font-size: 16px; font-weight: 600; background: #c8ff3d; color: #0d0c12; cursor: pointer; }
+  a.bouton { display: block; box-sizing: border-box; width: 100%; padding: 14px; margin: 10px 0 0; border-radius: 12px;
+             font-size: 16px; font-weight: 600; background: #c8ff3d; color: #0d0c12; text-align: center; text-decoration: none; }
   button.secondaire { background: transparent; color: #f4f4f6; border: 1px solid #3a3946; }
   .alerte { color: #ffb4b4; }
   .etat { font-size: 17px; }
@@ -191,20 +224,6 @@ export function pageTestConnexion(nomAppli: string, methodes: string[]): Respons
     document.getElementById('boutons').hidden = connecte;
     document.getElementById('deconnexion').hidden = !connecte;
   }
-
-  document.querySelectorAll('[data-methode]').forEach((bouton) => {
-    bouton.addEventListener('click', async () => {
-      erreur('');
-      const reponse = await api('/sign-in/social', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ provider: bouton.dataset.methode, callbackURL: location.origin + '/test-connexion' }),
-      });
-      const donnees = await reponse.json().catch(() => ({}));
-      if (donnees.url) location.href = donnees.url;
-      else erreur('Connexion impossible : ' + (donnees.message || reponse.status));
-    });
-  });
 
   document.getElementById('deconnexion').addEventListener('click', async () => {
     await api('/sign-out', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });

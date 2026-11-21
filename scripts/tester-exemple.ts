@@ -70,6 +70,38 @@ await etape('retour vers un scheme inconnu refusé', async () => {
   assert.notEqual(r.status, 200, 'un scheme non déclaré ne doit pas être accepté');
 });
 
+/** Cookies « nom=valeur » posés par une réponse. */
+const cookiesDe = (r: Response) => r.headers.getSetCookie().map((c) => c.split(';')[0]).join('; ');
+
+/** Simule le retour de Google avec un faux code : renvoie l'erreur indiquée dans la redirection. */
+async function retourGoogle(urlGoogle: string, cookies: string) {
+  const etat = new URL(urlGoogle).searchParams.get('state') ?? '';
+  const r = await fetch(`${base}/api/auth/callback/google?state=${encodeURIComponent(etat)}&code=faux-code`, {
+    headers: cookies ? { cookie: cookies } : {},
+    redirect: 'manual',
+  });
+  return new URL(r.headers.get('location') ?? '', base).searchParams.get('error');
+}
+
+await etape('départ vers Google par navigation (/test-connexion/aller) : redirection + cookie d’état', async () => {
+  const r = await fetch(`${base}/test-connexion/aller?methode=google`, { redirect: 'manual' });
+  assert.equal(r.status, 302, await r.text());
+  const google = new URL(r.headers.get('location') ?? '');
+  assert.equal(google.hostname, 'accounts.google.com');
+  const cookies = cookiesDe(r);
+  assert.ok(cookies.includes('state'), `cookie d'état attendu, reçu : ${cookies}`);
+  // Retour de Google avec le cookie : l'état est reconnu, seul le faux code est refusé.
+  assert.equal(await retourGoogle(google.href, cookies), 'invalid_code');
+  // Sans le cookie : refus « state_mismatch » (c'est ce cookie qui protège la connexion).
+  const r2 = await fetch(`${base}/test-connexion/aller?methode=google`, { redirect: 'manual' });
+  assert.equal(await retourGoogle(r2.headers.get('location') ?? '', ''), 'state_mismatch');
+});
+
+await etape('méthode non configurée refusée (/test-connexion/aller?methode=apple)', async () => {
+  const r = await fetch(`${base}/test-connexion/aller?methode=apple`, { redirect: 'manual' });
+  assert.equal(r.status, 400);
+});
+
 let cookie = '';
 const email = `test-${Date.now()}@exemple.fr`;
 
@@ -106,6 +138,7 @@ await etape('page /test-connexion', async () => {
   assert.equal(r.status, 200);
   const html = await r.text();
   assert.ok(html.includes('Se connecter avec Google'));
+  assert.ok(html.includes('/test-connexion/aller?methode=google'));
 });
 
 if (echecs) {
