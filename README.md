@@ -5,7 +5,7 @@ le code est partagé, **les données jamais** : chaque appli garde sa propre bas
 
 | Module | Rôle | État |
 |---|---|---|
-| `connexion` | Se connecter avec Google (puis Apple), garder la session, savoir qui appelle le serveur | v0.1 : Google |
+| `connexion` | Se connecter avec Google (puis Apple), garder la session, savoir qui appelle le serveur | 0.1.1 : Google, validé sur téléphone (« Je te l'avais dit ») |
 | *(plus tard)* | notifications, modération par IA, envoi d'images, paiements… | — |
 
 Versions : une appli installe **une version précise** du module (un « commit » figé, voir le tableau) et n'en change

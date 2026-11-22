@@ -21,7 +21,8 @@ d'important change. Mode d'emploi des modules : [`README.md`](README.md).
   étape de construction. Chaque version (champ `version` de `package.json`) est notée avec son commit dans le tableau
   « Versions » du README. Claude ne peut pas créer d'étiquette Git (refusé par le proxy, et contourner par un workflow
   a été refusé) : on n'utilise donc pas d'étiquettes. Le propriétaire peut en créer lui-même (GitHub › Releases) s'il le souhaite.
-- Premier utilisateur : « Je te l'avais dit » (dépôt privé `jayjayc501/jetelavaisdit`, branche `cloudflare`).
+- Premier utilisateur : « Je te l'avais dit » (dépôt privé `jayjayc501/jetelavaisdit`, branche `main`), serveur ET appli,
+  validé sur le téléphone du propriétaire le 22/11/2026 (connexion Google dans l'appli Android comprise).
 
 ## Façon de travailler
 
@@ -42,3 +43,5 @@ d'important change. Mode d'emploi des modules : [`README.md`](README.md).
 - 22/11/2026 (nuit) : tests ajoutés sans changer le code (commit `7108b97`) : retours vers l'appli Android avec chemin
   (`exemple:///`, `exemple:///accueil`) acceptés, relais Expo `/api/auth/expo-authorization-proxy` présent.
   « Je te l'avais dit » utilise le module côté serveur ET côté appli (branche `cloudflare`).
+- 22/11/2026 (matin) : « Je te l'avais dit » validé de bout en bout sur téléphone avec la 0.1.1, puis fusionné dans son `main`.
+  Prochaines évolutions possibles : Apple (0.2, compte Apple Developer requis), modération par IA, notifications.
